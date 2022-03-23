@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-model href="https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd"
+        schematypens="http://www.w3.org/2001/XMLSchema" ?>
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="0">
+    <General>
+      <!--
+        - Cyclonedds solo soporta y permite el descubrimiento de multidifusión (Multicast discovery) utilizando
+        una unica interfaz de red, y no múltiples.
+        - Si la interfaz de red no es especificada, entonces Cyclone DDS va a utilizar una seleccionada aleatoriamente.
+        - Para este ejemplo utilizaremos la interfaz de red Ethernet eth0.
+        - Esta interfaz puede ser reemplezada por cualquier otra en donde desee que sus dispositivos tengan comunicacion.
+      -->
+      <NetworkInterfaceAddress>tun0</NetworkInterfaceAddress>
+    </General>
+  </Domain>
+</CycloneDDS>
