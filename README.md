@@ -1,153 +1,75 @@
 # ekuabc
 
 ## ROS2 Foxy guidelines
+Projecto base que contiene una imagen Docker para construir un contenedor con Ubuntu 20.04 como sistema operativo principay y la distribucion de ROS 2 Foxy (Version completa) con algunos paquetes de demostracion.
 
-Base project docker image with ros2 foxy full distribution and a sample package.
-
-## CI
-
-CI relies on two Github Action packages that essentially configures the ROS2
-Foxy environment to build and test the packages. If extra dependencies are
-required which cannot be handled by `rosdep` you must perform the custom
-installation steps before the execution of `action-ros-ci`.
+## Integracion continua (CI)
+La integracion continua proporcionada en este repositorio se basa en las acciones de Github, estas acciones se encargan de configurar un entorno con ROS 2 Foxy
+para compilar (Buildear) y testear dos paquetes basicos. Si alguna dependencia adicional es requerida, esta no podra ser gestionada por `rosdep`, por lo tanto
+debe ejecutar los pasos de instalacion de dicha dependencia antes de ejecutar `action-ros-ci`.
 
 ## Docker
+Esta seccion proporciona pasos para la configuracion del contenedor Docker.
 
-- NVIDIA GPU support - *Skip this step if you don't have an NVIDIA graphics card*
+- Soporte de NVIDIA GPU: *Omita los siguientes dos pasos si no cuenta con una tarjeta de video NVIDIA.*
+  - Verifique que cuenta con los drives NVIDIA instalados, para ello abra una nueva terminal y ejecute el siguiente comando:
+    ```sh
+    nvidia-smi
+    ```
 
-Make sure you have the drivers installed:
+  - Si cuenta con los drivers y una tarjeta de video NVIDIA, instale `nvidia-container-toolkit` en el ordenador (host machine):
+    ```sh
+    sudo apt-get install -y nvidia-container-toolkit
+    ```
 
-```sh
-nvidia-smi
-```
+- Construya la imagen de Docker cuyo nombre es `ros2_foxy`:
 
-Install `nvidia-container-toolkit` in your host machine:
+  ```sh
+  ./docker/build.sh
+  ```
 
-```sh
-sudo apt-get install -y nvidia-container-toolkit
-```
+- Puede renombrar la imagen si es necesario (Opcional):
 
-- Build the docker image whose name is `ros2_foxy`:
+  ```sh
+  ./docker/build.sh -i my_fancy_image_name
+  ```
 
-```sh
-./docker/build.sh
-```
+- Corra el contenedor Docker a partir `ros2_foxy` con el nombre `ros2_foxy_container`:
 
-You can also try to set a specific image name:
+  ```sh
+  ./docker/run.sh
+  ```
 
-```sh
-./docker/build.sh -i my_fancy_image_name
-```
+- Tambien puede intentar especificar el nombre de la imagen y el contendor:
 
-- Run a docker container from `ros2_foxy` called `ros2_foxy_container`:
+  ```sh
+  ./docker/run.sh -i my_fancy_image_name -c my_fancy_container_name
+  ```
 
-```sh
-./docker/run.sh
-```
+## Preparacion del espacio de trabajo (Workspace), compilacion y testeo.
+La preparacion del espacio de trabajo debe ejecutarse dentro del contenedor.
 
-You can also try to set specific image and container names:
+- Para la instalacion de las dependencias del espacio de trabajo a través de `rosdep`:
+  ```sh
+  rosdep install -i -y --rosdistro foxy --from-paths src
+  ```
 
-```sh
-./docker/run.sh -i my_fancy_image_name -c my_fancy_container_name
-```
+- Ahora para la compilacion de nuestros paquetes (Publicadores y Subscriptores basicos en C++ y Python) ejecute el siguiente comando:
+  ```sh
+  colcon build
+  ```
 
-And a prompt in the docker image should appear at the root of the workspace:
+- Para obtener detalles adicionales de la compilacion, puede agregar la siguiente opcion al comando anterior:
+  ```sh
+  colcon build --event-handlers console_direct+
+  ```
 
-```sh
-$ pwd
-/home/username/ws
-$ ls -lash src/
-total 12K
-4.0K drwxr-xr-x 3 root         root         4.0K Nov 25 20:53 .
-4.0K drwxr-xr-x 1 root         root         4.0K Nov 25 20:53 ..
-4.0K drwxrwxr-x 4 agalbachicar agalbachicar 4.0K Nov 25 19:20 ekuabc
-```
+- Finalmente para poder ejecutar los test implementados para cada uno de los paquetes:
+  ```sh
+  colcon test --event-handlers console_direct+
+  colcon test-result
+  ```
 
-Note that the repository is mounted into a workspace. That is convenient if you
-are working in a single repository project. Note that for multi-repository
-workspace you should use another tool like vcs-tool to control via a `.repos`
-file the repositories in your workspace.
+## Probemos el codigo!
+En este caso la prueba de nuestro codigo la ejecutaremos con dos diferentes Middlewares, para ello acceda a la pagina [RMW_seleccion](RMW_seleccion.md)
 
-## Prepare your workspace, build and test
-
-- To install dependencies via `rosdep`:
-
-```sh
-rosdep install -i -y --rosdistro foxy --from-paths src
-```
-- To build:
-
-```sh
-colcon build
-```
-
-And if you want details of the run commands:
-
-```sh
-colcon build --event-handlers console_direct+
-```
-
-- To test:
-
-```sh
-colcon test
-# You should also consider to add --event-handlers console_direct+ to better
-# understand what's going on:
-# $ colcon test --event-handlers console_direct+
-colcon test-result
-```
-
-## Try the code!
-
-This is based on the [pub-sub Python tutorial](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Py-Publisher-And-Subscriber.html)
-and the [pub-sub C++ tutorial](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html)
-so consider looking at the specific instructions in the page for all the details.
-
-Once you have finished building and testing your workspace, make sure you try it.
-
-- Open tmux:
-
-```sh
-tmux
-```
-
-- Open two panes by sequentially pressing `Ctrl-b` and then `"`.
-
-- Source your install space:
-
-```sh
-source install/setup.bash
-```
-
-- In one pane run:
-
-```sh
-ros2 run py_pubsub talker
-```
-
-Alternatively you could try the C++ `talker` by doing:
-
-```sh
-ros2 run cpp_pubsub talker
-```
-
-- And in the other (you can switch between panes by sequentially pressing
-  `Ctrl-b` and the `up` and `down` arrow keys):
-
-```sh
-ros2 run py_pubsub listener
-```
-
-Alternatively you could try the C++ `listener` by doing:
-
-```sh
-ros2 run cpp_pubsub listener
-```
-
-You should see that in the `talker` pane you get logs every time a message is
-sent with an increasing counter and in the `listener` pane you get the sent
-message right after it was logged in the other one.
-
-You can stop each node by pressing `Ctrl-c` and then exit each tmux pane by
-`exit`ing the terminal session. You should return to the initial bash session
-in the container.

@@ -5,13 +5,13 @@
   <Domain Id="0">
     <General>
       <!--
-        - Cyclonedds solo soporta y permite el descubrimiento de multidifusión (Multicast discovery) utilizando
+        - Cyclone DDS solo soporta y permite el descubrimiento de multidifusión (Multicast discovery) utilizando
         una unica interfaz de red, y no múltiples.
         - Si la interfaz de red no es especificada, entonces Cyclone DDS va a utilizar una seleccionada aleatoriamente.
-        - Para este ejemplo utilizaremos la interfaz de red Ethernet eth0.
+        - Para este ejemplo utilizaremos la interfaz de red Local lo.
         - Esta interfaz puede ser reemplezada por cualquier otra en donde desee que sus dispositivos tengan comunicacion.
       -->
-      <NetworkInterfaceAddress>tun0</NetworkInterfaceAddress>
+      <NetworkInterfaceAddress>lo</NetworkInterfaceAddress>
     </General>
   </Domain>
 </CycloneDDS>

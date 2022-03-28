@@ -19,53 +19,145 @@ Esta guia unicamente explicara las dos implementaciones de uso libre que se encu
 ### **eProsima Fast DDS**
 Para configurar FastRTPS necesitamos proporcionar un archivo de configuracion, este archivo es importante ya que nos permite especificar la interfaz o las interfaces de red que van a ser usadas durante la comunicacion. En caso de que el archivo de configuracion no sea proporcionado, FastRTPS utilizara todas las interfaces de red que se encuentres disponibles.
 
-Encuentre el archivo de configuracion para FastRTPS en ... El archivo de configuracion proporcionado contiene una IP de ejemplo que es usada para comunicarse con otro dispositivo por medio de la interfaz elegida; sin embargo, esta IP debe ser modificada en cada caso. Recuerde que para esta implementacion diferentes interfaces de red pueden ser usadas simultaneamente, esto proporciona una gran ventaja cuando una de las interfaces de red presenta mayor latencia que otra.
+Encuentre el archivo de configuracion para FastRTPS en [configuracion_red/DEFAULT_FASTRTPS_PROFILES.xml](./configuracion_red/DEFAULT_FASTRTPS_PROFILES.xml). El archivo de configuracion proporcionado contiene una IP de ejemplo que es usada para comunicarse con otro dispositivo por medio de la interfaz elegida; sin embargo, esta IP debe ser modificada en cada caso. Recuerde que para esta implementacion diferentes interfaces de red pueden ser usadas simultaneamente, esto proporciona una gran ventaja cuando una de las interfaces de red presenta mayor latencia u otro tipo de inconvenientes que otra.
 
-Para usar FastRTPS como middleware ese necesario exportar y configurar dos variables de entorno, para hacerlo use los siguientes comandos:
+Para usar FastRTPS como middleware es necesario exportar y configurar dos variables de entorno, para hacerlo use los siguientes comandos:
 
 - Exporte el archivo de configuracion de los perfiles por defecto:
+  ```bash
+  cd src/ros2_dds_setup/configuracion_red/
+  export FASTRTPS_DEFAULT_PROFILES_FILE=/$PWD/DEFAULT_FASTRTPS_PROFILES.xml
+  ```
 
-    ```bash
-    cd carpeta
-    export FASTRTPS_DEFAULT_PROFILES_FILE=/$PWD/DEFAULT_FASTRTPS_PROFILES.xml
-    ```
+- Exporte la implementacion RMW (FastRTPS) para ROS 2:
+  ```bash
+  export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+  ```
 
-- Exporte la implementacion RMW (FastRTPS) para ROS2:
-
-    ```bash
-    export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-    ```
-
-- En este punto puede exportar la distribucion de ROS 2 y el espacio de trabajo que contiene los paquetes ROS 2. Esta etapa de exportacion puede ser ejecutada antes o despues de exportar las variables de entorno mencionadas arriba.
+- **Nota:** En este punto puede exportar la distribucion de ROS 2 y el espacio de trabajo que contiene los paquetes ROS 2. Esta etapa de exportacion puede ser ejecutada antes o despues de exportar las variables de entorno mencionadas arriba.
 
 
 ### **Eclipse Cyclone DDS**
-La configuracion de Eclipse Cyclone DDS es similar a la de eProsima Fast DDS, la unica diferencia toma lugar en el archivo de configuracion. El archivo de configuracion para este DDS nos permite seleccionar una sola interfaz de red que va a ser usada por nuestro sistema de ROS 2 (Note que esto es una diferencia con respecto a Fast DDS ya que en este ultimo era posible agregar mas de una interfaz de red para la comunicacion).
-
-
-In Birdseye Server repository the [CYCLONEDDS_CONFIG_NETWORK.xml](./config/network/CYCLONEDDS_CONFIG_NETWORK.xml) file is located at `config/network/` folder. The provided file contains an example interface which is used for communicating with the other device, this would need to be modified for every case.
-
+La configuracion de Eclipse Cyclone DDS es similar a la de eProsima Fast DDS, la unica diferencia toma lugar en el archivo de configuracion, el cual puede ser encontrado en [configuracion_red/cyclonedds_config.xml](./configuracion_red/cyclonedds_config.xml). El archivo de configuracion para este DDS nos permite seleccionar una sola interfaz de red que va a ser usada por nuestro sistema de ROS 2 (Note que esto es una diferencia con respecto a Fast DDS ya que en este ultimo era posible agregar mas de una interfaz de red para la comunicacion).
 
 Para usar Cyclone DDS como middleware ese necesario exportar y configurar dos variables de entorno, para hacerlo use los siguientes comandos:
 
 - Exporte el archivo de configuracion de los perfiles por defecto:
-
-    ```bash
-    cd carpeta
-    export CYCLONEDDS_URI=file://$PWD/cyclonedds_config_tun0.xml
-    ```
+  ```bash
+  cd src/ros2_dds_setup/configuracion_red/
+  export CYCLONEDDS_URI=file://$PWD/cyclonedds_config.xml
+  ```
 
 - Exporte la implementacion RMW (Cyclone DDS) para ROS2:
+  ```bash
+  export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+  ```
 
-```bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-```
+- **Nota:** En este punto puede exportar la distribucion de ROS 2 y el espacio de trabajo que contiene los paquetes ROS 2. Esta etapa de exportacion puede ser ejecutada antes o despues de exportar las variables de entorno mencionadas arriba.
 
-- En este punto puede exportar la distribucion de ROS 2 y el espacio de trabajo que contiene los paquetes ROS 2. Esta etapa de exportacion puede ser ejecutada antes o despues de exportar las variables de entorno mencionadas arriba.
-
-
-## Nodo de prueba con diferentes RMW
+## Probemos nuestro codigo con diferentes RMW
+Nuestro codigo de ejemplo esta basado en el [Tutorial Publicador-Subscriptor de Python](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Py-Publisher-And-Subscriber.html) y en el [Tutorial Publicador-Subscriptor de C++](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html), en caso de necesitar mayor informacion, dirijase a todos las paginas proporcionadas.
 Agregar instrucciones entregadas en el README principal
+
+Una vez haya completado la compilacion y el test en el espacio de trabajo, podemos correr nuestros nodos con diferentes RMW y verificar que todo corra de la forma correcta.
+
+  - Ejecute tmux:
+  ```sh
+  tmux
+  ```
+
+  - Puede abrir dos terminales simultanemoanete al presionar `Ctrl-b` en inmediatamente despues `"`.
+
+  - Exporte la distribucion de ROS 2 y el espacio de trabajo que contiene nuestros paquetes.
+  ```sh
+  source /opr/ros/foxy/setup.bash
+  source install/setup.bash
+  ```
+
+### Seleccionando **eProsima Fast DDS**
+Este paso es necesario ejecutarlo en cada una de las terminales donde vaya a lanzar un nodo en ROS 2 (Que tengan relacion entre si)
+
+  - Exporte el archivo de configuracion de los perfiles por defecto:
+  ```bash
+  cd src/ros2_dds_setup/configuracion_red/
+  export FASTRTPS_DEFAULT_PROFILES_FILE=/$PWD/DEFAULT_FASTRTPS_PROFILES.xml
+  ```
+
+  - Exporte la implementacion RMW (FastRTPS) para ROS 2:
+  ```bash
+  export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+  ```
+
+  - Y ahora lance el nodo `talker` de ejemplo en su implementacion en Python:
+  ```sh
+  ros2 run py_pubsub talker
+  ```
+
+  - De forma alternativa, tambien podria usar el nodo `talker` en su implementacion en C++:
+  ```sh
+  ros2 run cpp_pubsub talker
+  ```
+
+En la otra ventana de la terminal (Puede cambiar entre estas divisiones al usar de forma sequencial los comandos `Ctrl-b` y las teclas `arriba` o `abajo`), no olvide ejecutar el mismo proceso de exportar los espacios de trabajo y especificar el RMW a utilizar:
+
+  - Y ahora lance el nodo `lister` de ejemplo en su implementacion en Python:
+  ```sh
+  ros2 run py_pubsub listener
+  ```
+
+  - De forma alternativa, tambien podria usar el nodo `talker` en su implementacion en C++:
+  ```sh
+  ros2 run cpp_pubsub listener
+  ```
+
+### Seleccionando **Eclipse Cyclone DDS**
+Este paso es necesario ejecutarlo en cada una de las terminales donde vaya a lanzar un nodo en ROS 2 (Que tengan relacion entre si)
+
+  - Exporte el archivo de configuracion de los perfiles por defecto:
+  ```bash
+  cd src/ros2_dds_setup/configuracion_red/
+  export CYCLONEDDS_URI=file://$PWD/cyclonedds_config.xml
+  ```
+
+  - Exporte la implementacion RMW (Cyclone DDS) para ROS2:
+  ```bash
+  export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+  ```
+
+  - Y ahora lance el nodo `talker` de ejemplo en su implementacion en Python:
+  ```sh
+  ros2 run py_pubsub talker
+  ```
+
+  - De forma alternativa, tambien podria usar el nodo `talker` en su implementacion en C++:
+  ```sh
+  ros2 run cpp_pubsub talker
+  ```
+
+En la otra ventana de la terminal (Puede cambiar entre estas divisiones al usar de forma sequencial los comandos `Ctrl-b` y las teclas `arriba` o `abajo`), no olvide ejecutar el mismo proceso de exportar los espacios de trabajo y especificar el RMW a utilizar:
+
+  - Y ahora lance el nodo `lister` de ejemplo en su implementacion en Python:
+  ```sh
+  ros2 run py_pubsub listener
+  ```
+
+  - De forma alternativa, tambien podria usar el nodo `talker` en su implementacion en C++:
+  ```sh
+  ros2 run cpp_pubsub listener
+  ```
+
+
+Por traducir!
+
+You should see that in the `talker` pane you get logs every time a message is
+sent with an increasing counter and in the `listener` pane you get the sent
+message right after it was logged in the other one.
+
+You can stop each node by pressing `Ctrl-c` and then exit each tmux pane by
+`exit`ing the terminal session. You should return to the initial bash session
+in the container.
+
+
 
 
 For more information visit [ROS 2 DDS/RTPS vendors](https://docs.ros.org/en/foxy/Concepts/About-Different-Middleware-Vendors.html) and [ROS 2 middleware implementations](https://docs.ros.org/en/galactic/Concepts/About-Middleware-Implementations.html)
