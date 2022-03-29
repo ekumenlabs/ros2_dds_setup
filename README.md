@@ -1,7 +1,7 @@
 # ekuabc
 
-## ROS2 Foxy guidelines
-Projecto base que contiene una imagen Docker para construir un contenedor con Ubuntu 20.04 como sistema operativo principay y la distribucion de ROS 2 Foxy (Version completa) con algunos paquetes de demostracion.
+## Informacion del proyecto
+Projecto base que contiene una imagen Docker para construir un contenedor con Ubuntu 20.04 como sistema operativo principal y la distribucion de ROS 2 Foxy (Version completa) con algunos paquetes de demostracion.
 
 ## Integracion continua (CI)
 La integracion continua proporcionada en este repositorio se basa en las acciones de Github, estas acciones se encargan de configurar un entorno con ROS 2 Foxy
@@ -31,7 +31,7 @@ Esta seccion proporciona pasos para la configuracion del contenedor Docker.
 - Puede renombrar la imagen si es necesario (Opcional):
 
   ```sh
-  ./docker/build.sh -i my_fancy_image_name
+  ./docker/build.sh -i mi_imagen
   ```
 
 - Corra el contenedor Docker a partir `ros2_foxy` con el nombre `ros2_foxy_container`:
@@ -43,7 +43,7 @@ Esta seccion proporciona pasos para la configuracion del contenedor Docker.
 - Tambien puede intentar especificar el nombre de la imagen y el contendor:
 
   ```sh
-  ./docker/run.sh -i my_fancy_image_name -c my_fancy_container_name
+  ./docker/run.sh -i mi_imagen -c my_fancy_container_name
   ```
 
 ## Preparacion del espacio de trabajo (Workspace), compilacion y testeo.
@@ -72,4 +72,3 @@ La preparacion del espacio de trabajo debe ejecutarse dentro del contenedor.
 
 ## Probemos el codigo!
 En este caso la prueba de nuestro codigo la ejecutaremos con dos diferentes Middlewares, para ello acceda a la pagina [RMW_seleccion](RMW_seleccion.md)
-

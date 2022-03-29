@@ -17,11 +17,11 @@ Esta guia unicamente explicara las dos implementaciones de uso libre que se encu
 | GurumNetworks GurumDDS | Comercial | `rmw_gurumdds_cpp` | Soporte de comunidad. Soporte incluido en versiones binarias, pero GurumDDS instalado individualmente|
 
 ### **eProsima Fast DDS**
-Para configurar FastRTPS necesitamos proporcionar un archivo de configuracion, este archivo es importante ya que nos permite especificar la interfaz o las interfaces de red que van a ser usadas durante la comunicacion. En caso de que el archivo de configuracion no sea proporcionado, FastRTPS utilizara todas las interfaces de red que se encuentres disponibles.
+Para configurar Fast DDS (Tambien conocido como FastRTPS como se puede observar en sus variables de entorno) necesitamos proporcionar un archivo de configuracion, este archivo es importante ya que nos permite especificar la interfaz o las interfaces de red que van a ser usadas durante la comunicacion. En caso de que el archivo de configuracion no sea proporcionado, Fast DDS utilizara todas las interfaces de red que se encuentres disponibles.
 
-Encuentre el archivo de configuracion para FastRTPS en [configuracion_red/DEFAULT_FASTRTPS_PROFILES.xml](./configuracion_red/DEFAULT_FASTRTPS_PROFILES.xml). El archivo de configuracion proporcionado contiene una IP de ejemplo que es usada para comunicarse con otro dispositivo por medio de la interfaz elegida; sin embargo, esta IP debe ser modificada en cada caso. Recuerde que para esta implementacion diferentes interfaces de red pueden ser usadas simultaneamente, esto proporciona una gran ventaja cuando una de las interfaces de red presenta mayor latencia u otro tipo de inconvenientes que otra.
+Encuentre el archivo de configuracion para Fast DDS en [configuracion_red/fastdds_profiles.xml](./configuracion_red/fastdds_profiles.xml). El archivo de configuracion proporcionado contiene una IP de ejemplo que es usada para comunicarse con otro dispositivo por medio de la interfaz elegida; sin embargo, esta IP debe ser modificada en cada caso. Recuerde que para esta implementacion diferentes interfaces de red pueden ser usadas simultaneamente, esto proporciona una gran ventaja cuando una de las interfaces de red presenta mayor latencia u otro tipo de inconvenientes que otra.
 
-Para usar FastRTPS como middleware es necesario exportar y configurar dos variables de entorno, para hacerlo use los siguientes comandos:
+Para usar Fast DDS como middleware es necesario exportar y configurar dos variables de entorno, para hacerlo use los siguientes comandos:
 
 - Exporte el archivo de configuracion de los perfiles por defecto:
   ```bash
@@ -70,7 +70,7 @@ Una vez haya completado la compilacion y el test en el espacio de trabajo, podem
 
   - Exporte la distribucion de ROS 2 y el espacio de trabajo que contiene nuestros paquetes.
   ```sh
-  source /opr/ros/foxy/setup.bash
+  source /opt/ros/foxy/setup.bash
   source install/setup.bash
   ```
 
@@ -80,7 +80,7 @@ Este paso es necesario ejecutarlo en cada una de las terminales donde vaya a lan
   - Exporte el archivo de configuracion de los perfiles por defecto:
   ```bash
   cd src/ros2_dds_setup/configuracion_red/
-  export FASTRTPS_DEFAULT_PROFILES_FILE=/$PWD/DEFAULT_FASTRTPS_PROFILES.xml
+  export FASTRTPS_DEFAULT_PROFILES_FILE=/$PWD/fastdds_profiles.xml
   ```
 
   - Exporte la implementacion RMW (FastRTPS) para ROS 2:
@@ -100,7 +100,7 @@ Este paso es necesario ejecutarlo en cada una de las terminales donde vaya a lan
 
 En la otra ventana de la terminal (Puede cambiar entre estas divisiones al usar de forma sequencial los comandos `Ctrl-b` y las teclas `arriba` o `abajo`), no olvide ejecutar el mismo proceso de exportar los espacios de trabajo y especificar el RMW a utilizar:
 
-  - Y ahora lance el nodo `lister` de ejemplo en su implementacion en Python:
+  - Y ahora lance el nodo `listener` de ejemplo en su implementacion en Python:
   ```sh
   ros2 run py_pubsub listener
   ```
@@ -136,7 +136,7 @@ Este paso es necesario ejecutarlo en cada una de las terminales donde vaya a lan
 
 En la otra ventana de la terminal (Puede cambiar entre estas divisiones al usar de forma sequencial los comandos `Ctrl-b` y las teclas `arriba` o `abajo`), no olvide ejecutar el mismo proceso de exportar los espacios de trabajo y especificar el RMW a utilizar:
 
-  - Y ahora lance el nodo `lister` de ejemplo en su implementacion en Python:
+  - Y ahora lance el nodo `listener` de ejemplo en su implementacion en Python:
   ```sh
   ros2 run py_pubsub listener
   ```
@@ -146,18 +146,36 @@ En la otra ventana de la terminal (Puede cambiar entre estas divisiones al usar 
   ros2 run cpp_pubsub listener
   ```
 
+Una vez seleccionada nuestra implementacion de DDS, y los nodos de prueba `talker` y `listener` estan corriendo, en la consola de nuestro nodo `talker` deberiamos ver un mensaje "Hello World!" con un contador que se incrementa una vez por segundo, y en la consola de nuestro nodo `listener` deberiamos ver el mismo mensaje justamente despues de que fue mostrado en la otra consola.
 
-Por traducir!
+- Consola del nodo Talker:
+  ```sh
+  [INFO] [1648569283.600949234] [minimal_publisher]: Publishing: "Hello World: 9"
+  [INFO] [1648569284.101093229] [minimal_publisher]: Publishing: "Hello World: 10"
+  [INFO] [1648569284.600692160] [minimal_publisher]: Publishing: "Hello World: 11"
+  [INFO] [1648569285.100826438] [minimal_publisher]: Publishing: "Hello World: 12"
+  [INFO] [1648569285.601028037] [minimal_publisher]: Publishing: "Hello World: 13"
+  [INFO] [1648569286.100849896] [minimal_publisher]: Publishing: "Hello World: 14"
+  [INFO] [1648569286.600548057] [minimal_publisher]: Publishing: "Hello World: 15"
+  [INFO] [1648569287.100791272] [minimal_publisher]: Publishing: "Hello World: 16"
+  ```
 
-You should see that in the `talker` pane you get logs every time a message is
-sent with an increasing counter and in the `listener` pane you get the sent
-message right after it was logged in the other one.
+- Consola del nodo Listener:
+  ```sh
+  [INFO] [1648569283.116940841] [minimal_subscriber]: I heard: "Hello World: 8"
+  [INFO] [1648569283.601321219] [minimal_subscriber]: I heard: "Hello World: 9"
+  [INFO] [1648569284.101660286] [minimal_subscriber]: I heard: "Hello World: 10"
+  [INFO] [1648569284.601298749] [minimal_subscriber]: I heard: "Hello World: 11"
+  [INFO] [1648569285.101591780] [minimal_subscriber]: I heard: "Hello World: 12"
+  [INFO] [1648569285.601753987] [minimal_subscriber]: I heard: "Hello World: 13"
+  [INFO] [1648569286.101463539] [minimal_subscriber]: I heard: "Hello World: 14"
+  [INFO] [1648569286.601341266] [minimal_subscriber]: I heard: "Hello World: 15"
+  [INFO] [1648569287.101485094] [minimal_subscriber]: I heard: "Hello World: 16"
+  ```
 
-You can stop each node by pressing `Ctrl-c` and then exit each tmux pane by
-`exit`ing the terminal session. You should return to the initial bash session
-in the container.
+- **Nota:** En este caso el resultado es el mismo para ambas implementaciones.
 
+Puede detener cualquiera de los nodos al presionar `Ctrl-c` y para terminar la sesion en cada terminal puede ejecutar `exit` o presiona `Ctrl-d`.
 
-
-
-For more information visit [ROS 2 DDS/RTPS vendors](https://docs.ros.org/en/foxy/Concepts/About-Different-Middleware-Vendors.html) and [ROS 2 middleware implementations](https://docs.ros.org/en/galactic/Concepts/About-Middleware-Implementations.html)
+## Informacion adicional
+En esta seccion puede encontrar informacion adicional sobre los diferentes proveedores de DDS para ROS 2. Aunque la mayoria de la informacion esta ingles, este es un buen complemento para entender en mayor profundidad los conceptos compartidos en esta guia. Para mayor informacion visits [Proveedores de DDS/RTPS para ROS 2](https://docs.ros.org/en/foxy/Concepts/About-Different-Middleware-Vendors.html) e [Implementaciones de Middleware para ROS 2](https://docs.ros.org/en/galactic/Concepts/About-Middleware-Implementations.html)
