@@ -1,15 +1,13 @@
-# ekuabc
+# Tutorial de configuracion del RMW para ROS 2
+Este proyecto busca proporcionar un tutorial practico y sencillo para entender y dominar la modificación del RMW para ROS 2. Dentro de este proyecto un contenedor es entregado con todas las herramientas necesarias para poder ejecutar los ejemplos explicados en esta guía.
 
-## Informacion del proyecto
-Projecto base que contiene una imagen Docker para construir un contenedor con Ubuntu 20.04 como sistema operativo principal y la distribucion de ROS 2 Foxy (Version completa) con algunos paquetes de demostracion.
-
-## Integracion continua (CI)
-La integracion continua proporcionada en este repositorio se basa en las acciones de Github, estas acciones se encargan de configurar un entorno con ROS 2 Foxy
-para compilar (Buildear) y testear dos paquetes basicos. Si alguna dependencia adicional es requerida, esta no podra ser gestionada por `rosdep`, por lo tanto
-debe ejecutar los pasos de instalacion de dicha dependencia antes de ejecutar `action-ros-ci`.
+## Información del proyecto
+Proyecto base que contiene una imagen Docker para construir un contenedor con Ubuntu 20.04 como sistema operativo principal y la distribución de ROS 2 Foxy (Version completa) con algunos paquetes de demostración.
+## Integración continua (CI)
+La integración continua proporcionada en este repositorio se basa en las acciones de Github, estas acciones se encargan de configurar un entorno con ROS 2 Foxy para compilar (Build) y testear dos paquetes básicos. Si alguna dependencia adicional es requerida, esta no podra ser gestionada por `rosdep` y por lo tanto debe ejecutar los pasos de instalación de dicha dependencia antes de ejecutar `action-ros-ci`.
 
 ## Docker
-Esta seccion proporciona pasos para la configuracion del contenedor Docker.
+Esta sección proporciona pasos para la configuración del contenedor Docker.
 
 - Soporte de NVIDIA GPU: *Omita los siguientes dos pasos si no cuenta con una tarjeta de video NVIDIA.*
   - Verifique que cuenta con los drives NVIDIA instalados, para ello abra una nueva terminal y ejecute el siguiente comando:
@@ -34,32 +32,32 @@ Esta seccion proporciona pasos para la configuracion del contenedor Docker.
   ./docker/build.sh -i mi_imagen
   ```
 
-- Corra el contenedor Docker a partir `ros2_foxy` con el nombre `ros2_foxy_container`:
+- Inicie el contenedor Docker basado en `ros2_foxy` con el nuevo nombre `ros2_foxy_container`:
 
   ```sh
   ./docker/run.sh
   ```
 
-- Tambien puede intentar especificar el nombre de la imagen y el contendor:
+- También puede intentar especificar el nombre de la imagen y el contendor:
 
   ```sh
   ./docker/run.sh -i mi_imagen -c my_fancy_container_name
   ```
 
-## Preparacion del espacio de trabajo (Workspace), compilacion y testeo.
-La preparacion del espacio de trabajo debe ejecutarse dentro del contenedor.
+## Preparación del espacio de trabajo (Workspace), compilación y testeo.
+La preparación del espacio de trabajo debe ejecutarse dentro del contenedor.
 
-- Para la instalacion de las dependencias del espacio de trabajo a través de `rosdep`:
+- Para la instalación de las dependencias del espacio de trabajo a través de `rosdep`:
   ```sh
   rosdep install -i -y --rosdistro foxy --from-paths src
   ```
 
-- Ahora para la compilacion de nuestros paquetes (Publicadores y Subscriptores basicos en C++ y Python) ejecute el siguiente comando:
+- Ahora para la compilación de nuestros paquetes (Publicadores y Subscriptores basicos en C++ y Python) ejecute el siguiente comando:
   ```sh
   colcon build
   ```
 
-- Para obtener detalles adicionales de la compilacion, puede agregar la siguiente opcion al comando anterior:
+- Para obtener detalles adicionales de la compilación, puede agregar la siguiente opción al comando anterior:
   ```sh
   colcon build --event-handlers console_direct+
   ```
@@ -70,5 +68,5 @@ La preparacion del espacio de trabajo debe ejecutarse dentro del contenedor.
   colcon test-result
   ```
 
-## Probemos el codigo!
-En este caso la prueba de nuestro codigo la ejecutaremos con dos diferentes Middlewares, para ello acceda a la pagina [RMW_seleccion](RMW_seleccion.md)
+## Probemos el código!
+En este caso la prueba de nuestro código la ejecutaremos con dos diferentes Middlewares, para ello acceda a la página [RMW_seleccion](RMW_seleccion.md)
