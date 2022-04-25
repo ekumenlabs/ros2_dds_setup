@@ -1,4 +1,4 @@
-# Tutorial de configuracion del RMW para ROS 2
+# Tutorial de configuración del RMW para ROS 2
 Este proyecto busca proporcionar un tutorial practico y sencillo para entender y dominar la modificación del RMW para ROS 2. Dentro de este proyecto un contenedor es entregado con todas las herramientas necesarias para poder ejecutar los ejemplos explicados en esta guía.
 
 ## Información del proyecto
